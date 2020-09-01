@@ -18,7 +18,7 @@ def change_ID(map_id, c_tab, replace = 'no'):
         rseq_split = line.split()
         # if header skips
         if rseq_split[0] == 't_id':
-            continue
+            new_rseq.append('\t'.join(map(str, rseq_split)))
         # if specified not to replace if fly id isnt found skips
         elif map_id_d.get(rseq_split[8], -1) == -1 and replace == 'no':
             continue
