@@ -1,4 +1,4 @@
-t_id	chr	strand	start	end	t_name	num_exons	length	gene_id	gene_name	cov	FPKM
+t_id	chr	strand	start	end	t_name	num_exons	length	UniProt_id	gene_name	cov	FPKM
 9	3R	-	3461351	3587054	FBtr0113885	6	3112	P35875	Parp	7.600407	10.997173
 36	3R	-	4189692	4190260	FBtr0078989	1	569	P09040	Dsk	0.000000	0.000000
 50	3R	-	4227387	4229238	FBtr0078986	5	1590	Q9VMY9	DhpD	0.000000	0.000000
