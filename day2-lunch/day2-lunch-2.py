@@ -33,13 +33,13 @@ def change_ID(map_id, c_tab, replace = 'no'):
             new_rseq.append('\t'.join(map(str, rseq_split)))
     rseq.close()
     # prints rseq data
-    np.savetxt('day2-lunch-2.out', new_rseq, fmt="%s")
+    np.savetxt('day2-lunch-2.out', new_rseq[0:100], fmt="%s")
 
 
 if __name__== "__main__":
     import sys
     import numpy as np
-    if len(sys.argv) ==2:
+    if len(sys.argv) == 4 and sys.argv[3] == 'yes':
         change_ID(sys.argv[1], sys.argv[2], sys.argv[3])
     else:
         change_ID(sys.argv[1], sys.argv[2])

@@ -13,5 +13,5 @@ for line in fly:
         map_file.append(data[-1] + '\t' + data[-2])
 fly.close()
 # writes out array to file
-np.savetxt('day2-lunch-1.out', map_file, fmt="%s")
+np.savetxt('day2-lunch-1.out', map_file[0:100], fmt="%s")
 
