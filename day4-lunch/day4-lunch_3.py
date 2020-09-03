@@ -5,14 +5,14 @@ import math
 #read in file
 gtf = open('/Users/cmdb/qbb2020-answers/day4-lunch/BDGP6.Ensembl.81.gtf', 'r')
 #set header for parsed data, will be removed later
-arr_prot_cod_gene = [['gene', 'start', 'stop']]
+arr_prot_cod_gene = [['gene', 'start', 'stop', 'biotype']]
 # parse input lines to make sure chromosome 3R, gene and protein coding and put into 2D array
 for line in gtf:
     line_split = line.rstrip().split()
-    if '3R' in line_split[0] and 'gene' in line_split[2] and 'protein_coding' in line_split[-1]:
-        arr_prot_cod_gene = np.vstack((arr_prot_cod_gene, [line_split[13].strip('"|;'), line_split[3], line_split[4]]))
+    if '3R' in line_split[0] and 'gene' in line_split[2]:
+        arr_prot_cod_gene = np.vstack((arr_prot_cod_gene, [line_split[13].strip('"|;'), line_split[3], line_split[4], line_split[-1].strip('"|;')]))
 gtf.close()
-#np.savetxt('test.txt', arr_prot_cod_gene, fmt="%s")
+np.savetxt('test.txt', arr_prot_cod_gene, fmt="%s")
 #set up starting variables for binary search: start, stop, count, position, and remove header of array
 arr_prot_cod_gene = arr_prot_cod_gene[1:len(arr_prot_cod_gene)][:]
 start = 0
@@ -49,6 +49,4 @@ while (start != stop):
     count += 1
 
 # output nearest position, distance and number of iterations needed to find it
-print('The nearest protein coding gene is {}.\n'.format(arr_prot_cod_gene[start][0]))
-print('The linear genomic distance from 3R:21,378,950 is {}.\n'.format(min(abs(int(arr_prot_cod_gene[start][1])-position), abs(int(arr_prot_cod_gene[start][2])-position))))
-print('It took {} iterations to find the nearest gene.'.format(count))
+print('The nearest protein coding gene is {} and its biotype is {}.\n'.format(arr_prot_cod_gene[start][0], arr_prot_cod_gene[start][3]))
