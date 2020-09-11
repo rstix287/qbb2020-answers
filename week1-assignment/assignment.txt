@@ -1,0 +1,189 @@
+#Question 1:
+##1a. 
+$ samtools faidx ref.fa
+$ head ref.fa.fai
+Halomonas	233806	11	70	71
+
+The reference genome is 233806 bp long.
+
+##1b.
+$ fastqc frag180.1.fq
+There are 35178 reads provided and they are 100 bp long.
+
+$ fastqc frag180.2.fq
+There are 35178 reads provided and they are 100 bp long.
+
+$ fastqc jump2k.1.fq
+There are 70355 reads provided and they are 50 bp long.
+
+$ fastqc jump2k.2.fq
+There are 70355 reads provided and they are 50 bp long.
+
+##1c.
+$ python
+>>> (35178*100/233806) * 2
+30.091614415370007
+>>> (70355*50/233806) * 2
+30.091186710349607
+
+I would expect to have 30x coverage.
+
+##1d. 
+See pictures labeled.
+
+
+#Question 2:
+##2a:
+$ jellyfish count -m 21 -C -s 1000000 *.fq
+$ jellyfish histo mer_counts.jf > reads.histo
+$ less reads.histo
+50 1091
+
+There are 1091 kmers that occur exactly 50 times.
+
+##2b.
+$ jellyfish dump -c -t mer_counts.jf | sort -r -g -k 2 | head -n 10
+GCCCACTAATTAGTGGGCGCC	105
+CGCCCACTAATTAGTGGGCGC	104
+CCCACTAATTAGTGGGCGCCG	104
+ACGGCGCCCACTAATTAGTGG	101
+CAGGCCAGCTTATAAGCTGGC	98
+AACAGGCCAGCTTATAAGCTG	98
+ACAGGCCAGCTTATAAGCTGG	97
+AGGCCAGCTTATAAGCTGGCC	95
+AGCATCGCCCACATGTGGGCG	83
+GCATCGCCCACATGTGGGCGA	82
+
+##2c. 
+Uploaded reads.histo from 2a to GenomeScope and the min Genome Haploid Length was 233,468 bp.
+
+##2d. 
+The genome size estimate is very close to the reference genome size. There is a 0.14% difference in the estimated length versus the actual reference genome size.
+
+#Question 3:
+##3a.
+$ spades.py --pe1-1 frag180.1.fq --pe1-2 frag180.2.fq --mp1-1 jump2k.1.fq --mp1-2 jump2k.2.fq -o asm -t 4 -k 31
+$ grep -c ">" contigs.fasta
+4
+
+There were 4 contigs produced.
+
+##3b. 
+$ samtools faidx contigs.fasta
+$ python
+>>> import numpy as np
+>>> data = np.genfromtxt('/Users/cmdb/qbb2020-answers/week1-assignment/asm/asm/contigs.fasta.fai', usecols=(1))
+>>> data.sum()
+234467.0
+
+The total length of the contigs is 234467 bp long.
+
+##3c. 
+$ sort -n -k 2 -r contigs.fasta.fai
+NODE_1_length_105831_cov_20.671371	105831	36	60	61
+NODE_2_length_47861_cov_20.231319	47861	107666	60	61
+NODE_3_length_41352_cov_20.588756	41352	156360	60	61
+NODE_4_length_39423_cov_20.384723	39423	198437	60	61
+
+The size of the largest contig is 105831 bp long.
+
+##3d. 
+$ python
+>>> 233806/2
+116903.0
+>>> 105831 > 233805/2
+False
+>>> 105831 + 47861 > 233805/2
+True
+
+The N50 contig size is 47861.
+
+#Question 4:
+##4a. 
+$ dnadiff ../ref.fa contigs.fasta
+$ head out.report
+/Users/cmdb/qbb2020-answers/week1-assignment/asm/asm/../ref.fa /Users/cmdb/qbb2020-answers/week1-assignment/asm/asm/contigs.fasta
+NUCMER
+
+                               [REF]                [QRY]
+[Sequences]
+TotalSeqs                          1                    4
+AlignedSeqs               1(100.00%)           4(100.00%)
+UnalignedSeqs               0(0.00%)             0(0.00%)
+
+[Bases]
+
+$ grep "AvgIdentity" out.report
+
+AvgIdentity                   100.00               100.00
+AvgIdentity                   100.00               100.00
+
+The average identity of the assembly compared to the reference is 100%.
+
+##4b.
+$ nucmer ../ref.fa contigs.fasta
+$ show-coords out.delta
+/Users/cmdb/qbb2020-answers/week1-assignment/asm/asm/../ref.fa /Users/cmdb/qbb2020-answers/week1-assignment/asm/asm/contigs.fasta
+NUCMER
+
+    [S1]     [E1]  |     [S2]     [E2]  |  [LEN 1]  [LEN 2]  |  [% IDY]  | [TAGS]
+=====================================================================================
+  127965   233795  |   105831        1  |   105831   105831  |    99.99  | Halomonas	NODE_1_length_105831_cov_20.671371
+   40651    88511  |    47861        1  |    47861    47861  |   100.00  | Halomonas	NODE_2_length_47861_cov_20.231319
+       3    26789  |    41352    14566  |    26787    26787  |   100.00  | Halomonas	NODE_3_length_41352_cov_20.588756
+   26790    40642  |    13853        1  |    13853    13853  |   100.00  | Halomonas	NODE_3_length_41352_cov_20.588756
+   88532   127954  |    39423        1  |    39423    39423  |   100.00  | Halomonas	NODE_4_length_39423_cov_20.384723
+
+The length of the longest alignment is 105831 bp long.
+
+##4c.
+$ grep "Insertions*" asm/out.report 
+Insertions                         5                    1
+InsertionSum                      51                  712
+InsertionAvg                   10.20               712.00
+
+
+There is 1 insertion in the assembly and 5 deletions in the assembly.
+
+#Question 5:
+##5a.
+$ show-coords -r out.delta 
+/Users/cmdb/qbb2020-answers/week1-assignment/asm/asm/../ref.fa /Users/cmdb/qbb2020-answers/week1-assignment/asm/asm/contigs.fasta
+NUCMER
+
+    [S1]     [E1]  |     [S2]     [E2]  |  [LEN 1]  [LEN 2]  |  [% IDY]  | [TAGS]
+=====================================================================================
+       3    26789  |    41352    14566  |    26787    26787  |   100.00  | Halomonas	NODE_3_length_41352_cov_20.588756
+   26790    40642  |    13853        1  |    13853    13853  |   100.00  | Halomonas	NODE_3_length_41352_cov_20.588756
+   40651    88511  |    47861        1  |    47861    47861  |   100.00  | Halomonas	NODE_2_length_47861_cov_20.231319
+   88532   127954  |    39423        1  |    39423    39423  |   100.00  | Halomonas	NODE_4_length_39423_cov_20.384723
+  127965   233795  |   105831        1  |   105831   105831  |    99.99  | Halomonas	NODE_1_length_105831_cov_20.671371
+
+The position of the insertion in the assembly is at 14565, which corresponds to 26789 in the reference.
+
+##5b.
+14565 - 13853 = 712
+The novel insertion is 712bp long.
+
+##5c.
+$ samtools faidx contigs.fasta NODE_3_length_41352_cov_20.588756:13854-14565 > novel_insertion.fasta
+$ more novel_insertion.fasta
+>NODE_3_length_41352_cov_20.588756:13854-14565
+TAACGATTTACATCGGGAAAGCTTAATGCAATTCACGCAGATATTCAGCTTAGAAGGTAC
+GCAGCGGTGACGGGGTGCGGTCCATAATCTATGAAGCTATGAATTCGTACCTCAAGTAAT
+GTTTTCTTCGCTGCAGTTCAGAAGTGATAAAGGTATCCCGCTTAGCCTGGCATACTTTGT
+GCGTTCGTACCGCCCAGCATTAATGACTTGTGTAGGCAAGTAATGAACGACTCTTCTACG
+CCGCGCCTAACCTCCGCACATAATGGCAGCATGTGGTAGTTACATACGCACAGAAGTGGT
+TCGGTTTTAACTATAGTCAGATATGAATAAGCTGCGTGTGTCGTTGTGTCGGCGTGTCGT
+ACTTACCTCCTGACATAGGTGAATTTCAGCCTACTGTAAGTTTGGAGTCGCGCTCTTTTC
+TTATTATATTCTTTGGTATGTGTGTGATGGGTTCGGGCGTGTATTGATGTCTCTAAGGCT
+CATGTTAGTGTTTATTTGGTCAGTTATGACGGTGTTCCTGTCGTACGTGTTGGCTTAGCG
+GACTTGTAGACGGGATCAAGGTTGTCTGACCCTCCGGTCGACCGTGGGTCGGCCGTCCCG
+GCCAGAATACAAGCCGCTTAGACTTTCGAAAGAGGGTAAGTTACTACGCGCGAACGTTAT
+ACCTCGTTTCAGTATGCACTCCCTTAAGTCACTCAGAAAAGACTAAGGGGCT
+
+##5d.
+$ python ../ported_decoder.py -d --rev_comp --input novel_insertion.fasta
+The decoded message :  Congratulations to the 2020 CMDB @ JHU class!  Keep on looking for little green aliens...
+
+
