@@ -1,0 +1,10 @@
+$ bismark_genome_preparation --parallel 4 chr6
+
+$ bismark --parallel 4 chr6 -1 SRR3083926_1.chr6.fastq -2 SRR3083926_2.chr6.fastq
+$ bismark --parallel 4 chr6 -1 SRR3083929_1.chr6.fastq -2 SRR3083929_2.chr6.fastq
+
+$ for sample in SRR3083926_1.chr6_bismark_bt2_pe SRR3083929_1.chr6_bismark_bt2_pe; do   samtools sort ${sample}.bam -o ${sample}.sorted.bam;   samtools index ${sample}.sorted.bam; done
+
+$ bismark_methylation_extractor SRR3083926_1.chr6_bismark_bt2_pe.sorted.bam SRR3083929_1.chr6_bismark_bt2_pe.sorted.bam --parallel 4 --bedgraph --comprehensive
+
+$ python gene_methylation_enrichment.py methylation_fastq/SRR3083926_1.chr6_bismark_bt2_pe.sorted.bedGraph methylation_fastq/SRR3083929_1.chr6_bismark_bt2_pe.sorted.bedGraph mm10_refseq_genes_chr6_50M_60M.bed
