@@ -9,6 +9,7 @@ neg = np.genfromtxt('negative_WT_fpkm.bed', usecols=4)
 fig, ax = plt.subplots()
 part = ax.violinplot(pos, positions=[0], showmeans=False, showmedians=False, showextrema=False)
 part2 = ax.violinplot(neg, positions=[1], showmeans=False, showmedians=False, showextrema=False)
+ax.set_yscale('log')
 ax.set_xticks([0, 1])
 ax.set_xticklabels(['B-compartment (positive)', 'A-compartment (negative)'])
 for pc in part['bodies']:

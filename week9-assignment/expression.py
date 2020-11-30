@@ -28,7 +28,7 @@ for it in range(0, len(neg_start)):
     neg_h3k27me3.append(val) 
 
 # Plot expression and H3K27me3
-fig, ax = plt.subplots(2)
+fig, ax = plt.subplots(2, sharex = True, sharey = True)
 ax[0].scatter(pos_expression, pos_h3k27me3, alpha=0.5)
 ax[1].scatter(neg_expression, neg_h3k27me3, alpha=0.5)
 ax[0].set_title("B-Compartment", fontsize = 16)
@@ -37,5 +37,7 @@ ax[0].set_xlabel("Expression FPKM", fontsize = 16)
 ax[1].set_xlabel("Expression FPKM", fontsize = 16)
 ax[0].set_ylabel("H3K27me3 Signal", fontsize = 16)
 ax[1].set_ylabel("H3K27me3 Signal", fontsize = 16)
+ax[0].set_yscale('log')
+ax[1].set_yscale('log')
 plt.tight_layout()
 plt.savefig('expressionH3K27me3.png')
