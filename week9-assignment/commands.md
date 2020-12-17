@@ -5,7 +5,7 @@ $ wget "https://bx.bio.jhu.edu/data/cmdb-lab/3DGenomeData.tar.gz"
 $ tar xzf 3DGenomeData.tar.gz 
 
 # Normalizing hiC data
-$ hifive fends -L genome/mm9.len --binned 100 gen_part.fend
+$ hifive fends -L genome/mm9.len --binned 100000 gen_part.fend
 
 $ hifive hic-data -X data/WT_100kb/raw_\*.mat gen_part.fend counts_inter.fend
 
